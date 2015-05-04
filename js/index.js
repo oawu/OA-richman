@@ -51,6 +51,8 @@ $(function () {
     var uLng = mLng / c;
 
     if (count <= 0) {
+      ni -= 1;
+
       b = map.getCenter ();
       mLat = a.lat () - b.lat ();
       mLng = a.lng () - b.lng ();
