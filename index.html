@@ -7,15 +7,37 @@
 
     <title>Rule</title>
 
-    <link href="css/frame.css" rel="stylesheet" type="text/css" />
+    <link href="css/index.css" rel="stylesheet" type="text/css" />
+    <link href="res/oa/oa-jelly.css" rel="stylesheet" type="text/css" />
 
     <script src="res/jquery_v1.10.2/jquery-1.10.2.min.js" language="javascript" type="text/javascript" ></script>
-    <script src="js/frame.js" language="javascript" type="text/javascript" ></script>
+    <script src="res/oa/oa-jelly.js" language="javascript" type="text/javascript" ></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&language=zh-TW" language="javascript" type="text/javascript"></script>
+    <script src="js/index.js" language="javascript" type="text/javascript" ></script>
 
   </head>
   <body lang="zh-tw">
     
-    <div id='container'></div>
+    <div id='container'>
+      <div class="map">
+        <i></i><i></i><i></i><i></i>
+        <div id='map'></div>
+        <button type='button' id='dice'>擲骰子</button>
+      </div>
+    </div>
+
+    <div class='run hide'>
+      <div>
+        <div id="cube" class="show1">
+          <div class="top"></div>
+          <div class="front"></div>
+          <div class="left"></div>
+          <div class="back"></div>
+          <div class="right"></div>
+          <div class="bottom"></div>
+        </div>
+      </div>      
+    </div>
 
   </body>
 </html>

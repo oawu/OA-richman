@@ -1,0 +1,37 @@
+/**
+ * @author      OA Wu <comdan66@gmail.com>
+ * @copyright   Copyright (c) 2014 OA Wu Design
+ */
+
+@import "_oa";
+
+.oa-jelly {
+  position: relative;
+  display: inline-block;
+  outline: none;
+  cursor: pointer;
+  overflow: hidden;
+
+  &[disabled] {
+    cursor: not-allowed;
+  }
+
+  @include scale(1);
+  &.oa-jelly-effect {
+    @include animation(oa-jelly .2s ease-out);
+  }
+}
+@include keyframes(oa-jelly) {
+  0% {
+    @include scale(1);
+  }
+  30% {
+    @include scale(1.1);
+  }
+  80% {
+    @include scale(0.9);
+  }
+  100% {
+    @include scale(1);
+  }
+}
