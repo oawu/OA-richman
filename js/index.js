@@ -27,12 +27,15 @@ $(function () {
   function circlePath (r) { return 'M 0 0 m -' + r + ', 0 a ' + r + ',' + r + ' 0 1,0 ' + (r * 2) + ',0 a ' + r + ',' + r + ' 0 1,0 -' + (r * 2) + ',0'; }
   function userPath (r) { return 'm-16,0 a16,5 0 1 0 32,0 l-11,-24 a12.5,12.5 0 1 0 -6,0 l-14,25'; }
 
+  function moveMap (a, uLat, uLng, i, c) {
+    map.setCenter (new google.maps.LatLng (a.lat () + uLat * i, a.lng () + uLng * i));
 
-  function go (count) {
-    if (count <= 0) {
+    if (i < c)
+      setTimeout (function () { moveMap (a, uLat, uLng, i + 1, c); }, 50);
+    else
       $dice.prop ('disabled', false);
-      return;
-    }
+  }
+  function go (count) {
 
     ni += 1;
     ni %= (markers.length - 1);
@@ -44,9 +47,21 @@ $(function () {
     var r = ((Math.abs (mLat) + Math.abs (mLng)) / 2);
     var c = r < 10 ? r < 1 ? r < 0.1 ? r < 0.01 ? r < 0.001 ? r < 0.0001 ? 3 : 6 : 9 : 12 : 15 : 24 : 21;
 
-    uLat = mLat / c;
-    uLng = mLng / c;
+    var uLat = mLat / c;
+    var uLng = mLng / c;
 
+    if (count <= 0) {
+      b = map.getCenter ();
+      mLat = a.lat () - b.lat ();
+      mLng = a.lng () - b.lng ();
+      r = ((Math.abs (mLat) + Math.abs (mLng)) / 2);
+      c = r < 10 ? r < 1 ? r < 0.1 ? r < 0.01 ? r < 0.001 ? r < 0.0001 ? 3 : 6 : 9 : 12 : 15 : 24 : 21;
+
+      uLat = mLat / c;
+      uLng = mLng / c;
+
+      return moveMap (b, uLat, uLng, 0, c);
+    }
     moveMarker (user, a, uLat, uLng, 0, c, count);
   }
   function moveMarker (user, a, uLat, uLng, i, c, count) {
@@ -54,9 +69,7 @@ $(function () {
     if (i < c) {
       setTimeout (function () { moveMarker (user, a, uLat, uLng, i + 1, c, count); }, 50);
     } else {
-      map.setCenter (new google.maps.LatLng (a.lat () + uLat * i, a.lng () + uLng * i));
-      if (count > 0)
-        go (count - 1);
+      if (count > 0) go (count - 1);
     }
   }
 
@@ -69,11 +82,10 @@ $(function () {
       zoomControl: true,
       scrollwheel: true,
       streetViewControl: false,
-      center: new google.maps.LatLng (23.567496231491233, 120.3035703338623),
+      center: markers[0],
     };
 
     map = new google.maps.Map ($map.get (0), mapOptions);
-
 
     markers = markers.map (function (t, i) {
       return new google.maps.Marker ({
