@@ -115,9 +115,10 @@ $(function () {
 
     $dice.OAjelly ().click (function () {
       $dice.prop ('disabled', true);
+      $cube.attr ('class', 'show' + Math.floor ((Math.random () * 6) + 1));
 
       $run.fadeIn (function () {
-        var cube = Math.floor((Math.random() * 6) + 1);
+      var cube = Math.floor ((Math.random () * 6) + 1);
         $cube.attr ('class', 'show' + cube);
 
         setTimeout (function () {
