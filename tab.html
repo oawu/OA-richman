@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="tw">
+  <head>
+    <meta http-equiv="Content-Language" content="zh-tw" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui" />
+
+    <title>Rule</title>
+
+    <link href="css/frame.css" rel="stylesheet" type="text/css" />
+
+    <script src="res/jquery_v1.10.2/jquery-1.10.2.min.js" language="javascript" type="text/javascript" ></script>
+    <script src="js/frame.js" language="javascript" type="text/javascript" ></script>
+
+  </head>
+  <body lang="zh-tw">
+    
+    <div id='container'>
+      <div class='b'>
+        <h1>重點規則</h1>
+        <ol>
+          <li>當使用大括號時，<k>左大括號不需換行</k>。</li>
+          <li>parent::__construct 下一行需換行。</li>
+          <li>public function __construct 上一行需換行。</li>
+          <li>當使用函式時，則需<k>換行並縮排</k>。</li>
+          <li>縮排 tab 使用<k>兩個空格</k>。</li>
+          <li>一次縮排代表兩個空格(一個 tab)。</li>
+          <li>每換行就往內縮排一次。</li>
+          <li>參數<k>過長(5個以上)</k>時，必須縮排一次。</li>
+        </ol>
+      </div>
+
+      <div class='b'>
+        <h2>左大括號</h2>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              if (($a < $b) && ($c < $d))
+              {
+
+              }
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，左大括號不需換行'>
+            <pre>
+              if (($a < $b) && ($c < $d))<g> {</g>
+
+              }
+            </pre>
+          </div>
+        </div>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              public function index ()
+              {
+
+              }
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，左大括號不需換行'>
+            <pre>
+              public function index ()<g> {</g>
+
+              }
+            </pre>
+          </div>
+        </div>
+      </div>
+      
+      <div class='b'>
+        <h2>parent::__construct</h2>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              class Main extends Site_controller {
+
+                public function __construct () {
+                  parent::__construct ();
+                  $this->load->helper ('html');
+                }
+              }
+            </pre>
+          </div>
+          <div class='r' data-msg='parent::__construct 後要換行'>
+            <pre>
+              class Main extends Site_controller {
+
+                public function __construct () {
+                  parent::__construct ();
+
+                  $this->load->helper ('html');
+                }
+              }
+            </pre>
+          </div>
+        </div>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              class Main extends Site_controller {
+                public function __construct () {
+                  parent::__construct ();
+
+                  $this->load->helper ('html');
+                }
+              }
+            </pre>
+          </div>
+          <div class='r' data-msg='public function __construct 前要換行'>
+            <pre>
+              class Main extends Site_controller {
+
+                public function __construct () {
+                  parent::__construct ();
+
+                  $this->load->helper ('html');
+                }
+              }
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div class='b'>
+        <h2>空格</h2>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              class Main extends Site_controller {
+
+                  public function __construct () {
+                      parent::__construct ();
+                  }
+              }
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，縮排應使用兩個空格'>
+            <pre>
+              class Main extends Site_controller {
+
+              <sp> </sp><sp> </sp>public function __construct () {
+              <sp> </sp><sp> </sp><sp> </sp><sp> </sp>parent::__construct ();
+              <sp> </sp><sp> </sp>}
+              }
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div class='b'>
+        <h2>參數過長</h2>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              function sum ($a, $b, $c, $d, $e, $f) {
+                return $a + $b + $c + $d + $e + $f;
+              }
+
+              echo func (111, 22, 3333, 4444444, 55, 6666666666666);
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，以函式名稱為基準，往內縮排一次'>
+            <pre>
+              function sum ($a, $b, $c, $d, $e, $f) {
+                return $a + $b + $c + $d + $e + $f;
+              }
+
+              echo func (
+                   <sp> </sp><sp> </sp>111,
+                   <sp> </sp><sp> </sp>22,
+                   <sp> </sp><sp> </sp>3333,
+                   <sp> </sp><sp> </sp>4444444,
+                   <sp> </sp><sp> </sp>55,
+                   <sp> </sp><sp> </sp>6666666666666
+                   );
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div class='b'>
+        <h2>陣列</h2>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              $array = array ('account' => 'comdan66', 'name' => 'OA', 'birthday' => '1989/07/21', 'email' => 'comdan66@gmail.com');
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，以 array 為基準，往內縮排一次'>
+            <pre>
+              $array = array (
+                       <sp> </sp><sp> </sp>'account' => 'comdan66',
+                       <sp> </sp><sp> </sp>'name' => 'OA',
+                       <sp> </sp><sp> </sp>'birthday' => '1989/07/21',
+                       <sp> </sp><sp> </sp>'email' => 'comdan66@gmail.com'
+                       );
+            </pre>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </body>
+</html>

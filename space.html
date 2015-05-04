@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="tw">
+  <head>
+    <meta http-equiv="Content-Language" content="zh-tw" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui" />
+
+    <title>Rule</title>
+
+    <link href="css/frame.css" rel="stylesheet" type="text/css" />
+
+    <script src="res/jquery_v1.10.2/jquery-1.10.2.min.js" language="javascript" type="text/javascript" ></script>
+    <script src="js/frame.js" language="javascript" type="text/javascript" ></script>
+
+  </head>
+  <body lang="zh-tw">
+    
+    <div id='container'>
+      <div class='b'>
+        <h1>重點規則</h1>
+        <ol>
+          <li>遇到 <k>大括號</k>{} 時，<k>左括號前</k>以及<k>右括號後</k>皆要有一個空格。</li>
+          <li>遇到 <k>小括號</k>() 時，<k>左括號前</k>以及<k>右括號後</k>皆要有一個空格。</li>
+          <li>遇到 <k>運算子</k>+-*/=.. 時，其<k>前後</k>需加一個空格。</li>
+          <li>遇到 <k>分號</k>; 時，其<k>後</k>需加一個空格。</li>
+          <li>遇到 <k>逗號</k>, 時，其<k>後</k>需加一個空格。</li>
+          <li>遇到 <k>關鍵字</k>if else switch.. 時，其<k>前後</k>需加一個空格。</li>
+        </ol>
+      </div>
+
+      
+      <div class='b'>
+        <h2>類別(class)</h2>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              class Main extends Site_controller{
+              }
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，左大括號前需一個空格'>
+            <pre>
+              class Main extends Site_controller<sp> </sp>{
+              }
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div class='b'>
+        <h2>函式(function)</h2>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              public function index(){
+                $this->load_view(null);
+              }
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，左括號前、右括號後 皆需一個空格'>
+            <pre>
+              public function index<sp> </sp>()<sp> </sp>{
+                $this->load_view<sp> </sp>(null);
+              }
+            </pre>
+          </div>
+        </div>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              array_map(function($item){
+                return $item;
+              },$array);
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，左括號、逗號後 皆需一個空格'>
+            <pre>
+              array_map<sp> </sp>(function<sp> </sp>($item)<sp> </sp>{
+                return $item;
+              },<sp> </sp>$array);
+            </pre>
+          </div>
+        </div>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              function func ($a,$b) {
+                return $a + $b;
+              }
+
+              echo func (1,2);
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，參數逗號後需一個空格'>
+            <pre>
+              function func ($a,<sp> </sp>$b) {
+                return $a + $b;
+              }
+
+              echo func (1, 2);
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div class='b'>
+        <h2>變數(variable)</h2>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              $a='哈羅';
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，等號前後需一個空格'>
+            <pre>
+              $a<sp> </sp>=<sp> </sp>'哈囉！';
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div class='b'>
+        <h2>運算子(operator)</h2>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              $a==$b
+              $a<=$b
+              $a===$b
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，運算子前後需一個空格'>
+            <pre>
+              $a<sp> </sp>==<sp> </sp>$b
+              $a<sp> </sp><=<sp> </sp>$b
+              $a<sp> </sp>===<sp> </sp>$b
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div class='b'>
+        <h2>關鍵字(if else switch..)</h2>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              if($a==$b){
+
+              }else{
+
+              }
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，左小括號前、運算子前後、右小括號後需一個空格'>
+            <pre>
+              if<sp> </sp>($a<sp> </sp>==<sp> </sp>$b)<sp> </sp>{
+
+              }<sp> </sp>else<sp> </sp>{
+
+              }
+            </pre>
+          </div>
+        </div>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              switch($variable){
+                case'value':
+                  break;
+                
+                default:
+                  break;
+              }
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，左小括號前、右小括號後需一個空格'>
+            <pre>
+              switch<sp> </sp>($variable)<sp> </sp>{
+                case<sp> </sp>'value':
+                  break;
+                
+                default:
+                  break;
+              }
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div class='b'>
+        <h2>回圈(loop)</h2>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              while($a<=10){
+
+              }
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，左小括號前、運算子前後、右小括號後需一個空格'>
+            <pre>
+              while<sp> </sp>($a<sp> </sp><=<sp> </sp>10)<sp> </sp>{
+
+              }
+            </pre>
+          </div>
+        </div>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              for ($i = 0;$i < 10;$i++) {
+              }
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，分號後需一個空格'>
+            <pre>
+              for ($i = 0;<sp> </sp>$i < 10;<sp> </sp>$i++) {
+              }
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div class='b'>
+        <h2>運算式(expression)</h2>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              $a = 'Hello';
+              $b = 'World';
+              echo $a.$b;
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，運算子前後需一個空格'>
+            <pre>
+              $a = 'Hello';
+              $b = 'World';
+              echo $a<sp> </sp>.<sp> </sp>$b;
+            </pre>
+          </div>
+        </div>
+        <div class='s'>
+          <div class='l' data-msg='錯誤' >
+            <pre>
+              $a = 1+2;
+              echo $a;
+            </pre>
+          </div>
+          <div class='r' data-msg='正確，運算子前後需一個空格'>
+            <pre>
+              $a = 1<sp> </sp>+<sp> </sp>2;
+              echo $a;
+            </pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
