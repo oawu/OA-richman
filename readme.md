@@ -32,4 +32,6 @@
 
 * 相關資源 - [Google Maps API](https://developers.google.com/maps/documentation/javascript/markers)
 
+* 其他參考 - [Dice](http://codepen.io/pukidepa/pen/ebgHy)
+
 * 更新日期 - 2015/05/05
