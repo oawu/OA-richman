@@ -3,8 +3,7 @@
 
 ---
 ## 聲明
-本作品只限分享於研究、研討性質之使用，並不提供任何有營利效益之使用。  
-如有營利用途，務必告知作者 [OA](http://www.ioa.tw/) (<comdan66@gmail.com>)，並且經由作者同意。
+本專案使用 [cc by-nc 2.0](http://creativecommons.org/licenses/by-nc/2.0/tw/) 授權。
 
 
 <br/>
