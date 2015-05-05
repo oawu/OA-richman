@@ -129,15 +129,21 @@ $(function () {
 
     $dice.OAjelly ().click (function () {
       $dice.prop ('disabled', true);
-      $cube.attr ('class', 'show' + Math.floor ((Math.random () * 6) + 1));
+
+      var cube = Math.floor ((Math.random () * 6) + 1);
+      $cube.attr ('class', 'show' + cube);
+      var nCube = cube;
+
+      do {
+        nCube = Math.floor ((Math.random () * 6) + 1);
+      } while (cube == nCube);
 
       $run.fadeIn (function () {
-      var cube = Math.floor ((Math.random () * 6) + 1);
-        $cube.attr ('class', 'show' + cube);
+        $cube.attr ('class', 'show' + nCube);
 
         setTimeout (function () {
           $run.fadeOut (function () {
-            go (cube);
+            go (nCube);
           });
         }, 700);
       });
