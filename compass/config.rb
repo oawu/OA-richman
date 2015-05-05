@@ -3,7 +3,7 @@ require 'compass/import-once/activate'
 
 # Set this to the root of your project when deployed:
 
-http_path = "/richman"
+http_path = "/OA-richman"
 
 fonts_dir = "font"
 fonts_path = "../font"
