@@ -39,7 +39,7 @@ $(function () {
 
     ni += 1;
     ni %= (markers.length - 1);
-    
+
     var a = user.getPosition ();
     var b = markers[ni].position;
     var mLat = b.lat () - a.lat ();
@@ -143,6 +143,22 @@ $(function () {
       });
     });
 
+    $('.btns .about').click (function () {
+      $('#about').removeClass ('hide');
+    });
+
+    $('#about .close').click (function () {
+      $(this).parents ('#about').addClass ('hide');
+    });
+
+
+    $('.btns .more').click (function () {
+      $('#more').removeClass ('hide');
+    });
+
+    $('#more .close').click (function () {
+      $(this).parents ('#more').addClass ('hide');
+    });
 
     $loading.fadeOut (function () {
       $(this).hide (function () {

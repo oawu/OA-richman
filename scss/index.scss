@@ -64,7 +64,6 @@ html {
       @include button('pink');
       font-size: 20px;
       width: 200px;
-
     }
     i {
       position: absolute;
@@ -93,9 +92,189 @@ html {
         top: 0; left: -5px; width: 5px;
       }
     }
+    .btns {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      display: inline-block;
+      width: 100%;
+      padding: 15px;
+      border: 1px solid rgba(39, 40, 34, .4);
+      background-color: rgba(255, 255, 255, .8);
+
+      @include border-radius(2px);
+      @include transition(all .3s);
+      @include box-shadow(0 0 15px 1px rgba(0, 0, 0, 0.2));
+
+      text-align: center;
+
+      > div {
+        display: inline-block;
+        margin: 0 auto;
+        @include clearfix();
+        @include clearfix();
+
+
+        .button {
+          float: left;
+          @include button();
+
+          + .button {
+            margin-left: 10px;
+          }
+        }
+      }
+    }
   }
 }
 
+#about, #more {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(39, 40, 34, .7);
+  text-align: center;
+
+  @media screen and (min-width: 0px) and (max-width: 559px) {
+    padding: 30px;
+  }
+  @media screen and (min-width: 560px) {
+    padding: 100px;
+  }
+
+  &.hide {
+    display: none;
+  }
+
+  .paper {
+    position: relative;
+    display: inline-block;
+    max-width: 960px;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    background-color: rgba(230, 230, 230, 1);
+    // @include paper();
+    border: 1px solid rgba(103, 103, 103, 0.5);
+    background-color: rgba(255, 255, 255, 1);
+    padding: 20px 20px;
+    text-align: left;
+
+    @include border-radius(3px);
+    @include box-shadow(0 1px 10px 0 rgba(103, 103, 103, 0.6));
+
+    .close {
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      font-size: 25px;
+      line-height: 33px;
+      text-align: center;
+      background-color: rgba(39, 40, 34, 1);
+      border: 3px solid rgba(255, 255, 255, .6);
+      color: rgba(255, 255, 255, .6);
+      overflow: hidden;
+      cursor: pointer;
+
+      @include transition(all .3s);
+      @include border-radius(50%);
+      @include box-shadow(0 0 10px rgba(20, 20, 20, .5));
+
+      &:hover {
+        border: 3px solid rgba(255, 255, 255, .9);
+        color: rgba(255, 255, 255, .9);
+        @include box-shadow(0 0 15px rgba(20, 20, 20, .85));
+      }
+    }
+  }
+}
+
+#about, #more {
+  h2 {
+    text-align: center;
+    border-bottom: 5px solid rgba(39, 40, 34, .2);
+    padding-bottom: 10px;
+    @media screen and (min-width: 0px) and (max-width: 559px) {
+      margin-top: 0;
+    }
+  }
+  .paper {
+    text-align: center;
+
+    .about, .more {
+      display: inline-block;
+      max-width: 4800px;
+      width: 100%;
+      margin: 0 auto;
+
+      a {
+        @include a();
+      }
+
+      @media screen and (min-width: 0px) and (max-width: 559px) {
+        .info {
+          text-align: left;
+          padding-left: 5px;
+
+          + .info {
+            margin-top: 10px;
+          }
+          .l {
+            font-weight: bold;
+            font-size: 13px;
+          }
+          .r {
+            margin-top: 2px;
+            padding-left: 5px;
+            &, a {
+              font-size: 12px;
+            }
+
+            &:before {
+              content: "→";
+              color: rgba(39, 40, 34, .3);
+              margin-right: 3px;
+            }
+          }
+        }
+      }
+
+      @media screen and (min-width: 560px) {
+        .info {
+          display: block;
+          width: 100%;
+
+          @include split-left(50%);
+          .l, .r {
+            padding: 5px 0;
+          }
+          .l {
+            font-weight: bold;
+            text-align: right;
+
+            &:after {
+              content: ":";
+              color: rgba(39, 40, 34, .3);
+              margin-left: 3px;
+              margin-right: 8px;
+            }
+          }
+          .r {
+            text-align: left;
+
+          }
+        }
+      }
+
+    }
+  }
+}
 
 #loading {
   position: fixed;
@@ -115,7 +294,7 @@ html {
 .run {
   position: fixed;
   display: inline-block;
-  
+
   top: 0;
   left: 0;
   width: 100%;
@@ -125,8 +304,12 @@ html {
   > div {
     display: inline-block;
     margin: 0 auto;
-    margin-top: 200px;
-
+    @media screen and (min-width: 0px) and (max-width: 559px) {
+      margin-top: 100px;
+    }
+    @media screen and (min-width: 560px) {
+      margin-top: 200px;
+    }
     width: 200px;
     height: 200px;
     @include perspective(200px);
@@ -153,7 +336,7 @@ html {
   background-image: image-url('map/dice-compressor.png', false, false);
 }
 
-.front  { 
+.front  {
   background-position: -12px -12px;
   @include transform(rotateY(0deg) translateZ(100px));
 }
