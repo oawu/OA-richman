@@ -182,21 +182,21 @@ $(function () {
   var $map = $('#map');
 
   var markerInfos = [
-    {/* marker: null, userCount: 0, */position: new google.maps.LatLng (23.568038757736595, 120.30465692281723)},
-    {/* marker: null, userCount: 0, */position: new google.maps.LatLng (23.565363909701762, 120.30417948961258)},
-    {/* marker: null, userCount: 0, */position: new google.maps.LatLng (23.564550135385016, 120.30402392148972)},
-    {/* marker: null, userCount: 0, */position: new google.maps.LatLng (23.565029549867546, 120.30180037021637)},
-    {/* marker: null, userCount: 0, */position: new google.maps.LatLng (23.56839031919102, 120.30243337154388)},
-    {/* marker: null, userCount: 0, */position: new google.maps.LatLng (23.568697627383873, 120.30138731002808)},
-    {/* marker: null, userCount: 0, */position: new google.maps.LatLng (23.57121506902716, 120.30256748199463)},
-    {/* marker: null, userCount: 0, */position: new google.maps.LatLng (23.572736819430755, 120.29828935861588)},
-    {/* marker: null, userCount: 0, */position: new google.maps.LatLng (23.5747059726961, 120.29707431793213)},
-    {/* marker: null, userCount: 0, */position: new google.maps.LatLng (23.576242432573448, 120.3018781542778)},
-    {/* marker: null, userCount: 0, */position: new google.maps.LatLng (23.57265323424432, 120.30320584774017)},
-    {/* marker: null, userCount: 0, */position: new google.maps.LatLng (23.57215172200842, 120.3030127286911)},
-    {/* marker: null, userCount: 0, */position: new google.maps.LatLng (23.571478119226718, 120.30489563941956)},
-    {/* marker: null, userCount: 0, */position: new google.maps.LatLng (23.569523668242216, 120.30414193868637)},
-    {/* marker: null, userCount: 0, */position: new google.maps.LatLng (23.568901679626702, 120.30510485172272)},
+    {position: new google.maps.LatLng (23.568038757736595, 120.30465692281723)},
+    {position: new google.maps.LatLng (23.565363909701762, 120.30417948961258)},
+    {position: new google.maps.LatLng (23.564550135385016, 120.30402392148972)},
+    {position: new google.maps.LatLng (23.565029549867546, 120.30180037021637)},
+    {position: new google.maps.LatLng (23.56839031919102, 120.30243337154388)},
+    {position: new google.maps.LatLng (23.568697627383873, 120.30138731002808)},
+    {position: new google.maps.LatLng (23.57121506902716, 120.30256748199463)},
+    {position: new google.maps.LatLng (23.572736819430755, 120.29828935861588)},
+    {position: new google.maps.LatLng (23.5747059726961, 120.29707431793213)},
+    {position: new google.maps.LatLng (23.576242432573448, 120.3018781542778)},
+    {position: new google.maps.LatLng (23.57265323424432, 120.30320584774017)},
+    {position: new google.maps.LatLng (23.57215172200842, 120.3030127286911)},
+    {position: new google.maps.LatLng (23.571478119226718, 120.30489563941956)},
+    {position: new google.maps.LatLng (23.569523668242216, 120.30414193868637)},
+    {position: new google.maps.LatLng (23.568901679626702, 120.30510485172272)},
   ];
   var Polyline = null;
   var user = null;
@@ -229,7 +229,7 @@ $(function () {
     return new google.maps.Map ($map.get (0), mapOptions);
   }
 
-  function initMarkerInfos (map, markerInfos) {
+  function initMarkerInfos (markerInfos) {
     return markerInfos.map (function (t) {
       t.userCount = 0;
 
@@ -241,7 +241,7 @@ $(function () {
         fillOpacity: 0.5
       };
       t.marker = new google.maps.Marker ({
-        map: map,
+        map: window.map,
         draggable: false,
         position: t.position,
         icon: icon
@@ -253,17 +253,17 @@ $(function () {
 
   function initPolyline (map, markerInfos) {
     return new google.maps.Polyline ({
-      map: map,
-      path: markerInfos.map (function (t) { return t.marker.getPosition (); }),
+      map: window.map,
+      path: window.markerInfos.map (function (t) { return t.marker.getPosition (); }),
       strokeColor: 'rgba(102, 217, 239, .5)',
       strokeWeight: 10
     });
   }
-  function initUser (map) {
+  function initUser () {
     return {
       index: 0,
       marker: new google.maps.Marker ({
-          map: map,
+          map: window.map,
           draggable: false,
           icon: {
             path: userPath (),
@@ -275,32 +275,32 @@ $(function () {
         })};
   }
 
-  function setUserStartPoint (user, markerInfos) {
-    var markerInfo = markerInfos[user.index];
+  function setUserStartPoint (user) {
+    var markerInfo = window.markerInfos[user.index];
 
-    if (!markerInfo)
+    if (!window.markerInfos[user.index])
       return false;
 
     var position = null;
-    switch (markerInfo.userCount) {
+    switch (window.markerInfos[user.index].userCount) {
       case 0:
-        position = markerInfo.position;
+        position = new google.maps.LatLng (window.markerInfos[user.index].position.lat (), window.markerInfos[user.index].position.lng ());
         break;
 
       case 1:
-        position = new google.maps.LatLng (markerInfo.position.lat (), markerInfo.position.lng () + 0.0005);
+        position = new google.maps.LatLng (window.markerInfos[user.index].position.lat (), window.markerInfos[user.index].position.lng () + 0.0005);
         break;
 
       case 2:
-        position = new google.maps.LatLng (markerInfo.position.lat (), markerInfo.position.lng () - 0.0005);
+        position = new google.maps.LatLng (window.markerInfos[user.index].position.lat (), window.markerInfos[user.index].position.lng () - 0.0005);
         break;
 
       case 3:
-        position = new google.maps.LatLng (markerInfo.position.lat () + 0.0005, markerInfo.position.lng ());
+        position = new google.maps.LatLng (window.markerInfos[user.index].position.lat () + 0.0005, window.markerInfos[user.index].position.lng ());
         break;
 
       case 4:
-        position = new google.maps.LatLng (markerInfo.position.lat () - 0.0005, markerInfo.position.lng ());
+        position = new google.maps.LatLng (window.markerInfos[user.index].position.lat () - 0.0005, window.markerInfos[user.index].position.lng ());
         break;
     }
 
@@ -308,54 +308,100 @@ $(function () {
       return false;
 
     user.marker.setPosition (position);
-    markerInfo.userCount += 1;
+    window.markerInfos[user.index].userCount += 1;
 
     return true;
   }
-
-  function userMove (user, unitLat, unitLng) {
-    user.setPosition ();
-  }
-
-  function userGo (user, step, markerInfos) {
-    // var index = user.index + step;
-    var i = (user.index + 1) % markerInfos.length;
-
-    var now = user.marker.getPosition ();
-    var will = markerInfos[i].marker.getPosition ();
-
+  function getUnit (will, now) {
     var addLat = will.lat () - now.lat ();
     var addLng = will.lng () - now.lng ();
     var aveAdd = ((Math.abs (addLat) + Math.abs (addLng)) / 2);
     var unit = aveAdd < 10 ? aveAdd < 1 ? aveAdd < 0.1 ? aveAdd < 0.01 ? aveAdd < 0.001 ? aveAdd < 0.0001 ? 3 : 6 : 9 : 12 : 15 : 24 : 21;
-    var unitLat = addLat / unit;
-    var unitLng = addLng / unit;
+    var lat = addLat / unit;
+    var lng = addLng / unit;
+    
+    if (!((Math.abs (lat) > 0) || (Math.abs (lng) > 0)))
+      return null;
 
-    userMove (user, unitLat, unitLng);
-    // user.marker.setPosition (will);
-    // console.error (i);
+    return {
+      unit: unit,
+      lat: lat,
+      lng: lng
+    };
+  }
+  function userMove (user, step, unitLat, unitLng, unitCount, unit) {
+    if (unit <= unitCount) {
+      // 移動結束
+      user.index = (user.index + 1) % window.markerInfos.length;
 
+      if (step > 1) {
+        return userGo (user, step - 1);
+      } else {
+        setUserStartPoint (user);
+        console.error ('s');
+      }
+      return true;
+    } else {
+      user.marker.setPosition (new google.maps.LatLng (user.marker.getPosition ().lat () + unitLat, user.marker.getPosition ().lng () + unitLng));
+      setTimeout (function () { userMove (user, step, unitLat, unitLng, unitCount + 1, unit); }, 50);
+    }
   }
 
+  function userGo (user, step) {
+    if (step < 1)
+      return false;
+
+    var now = user.marker.getPosition ();
+    var will = window.markerInfos[(user.index + 1) % window.markerInfos.length].marker.getPosition ();
+
+    var Unit = getUnit (will, now);
+    if (!Unit)
+      return false;
+
+    window.markerInfos[user.index].userCount -= 1;
+    userMove (user, step, Unit.lat, Unit.lng, 0, Unit.unit);
+  }
+
+  function mapMove (unitLat, unitLng, unitCount, unit) {
+    if (unit <= unitCount) {
+    } else {
+      window.map.setCenter (new google.maps.LatLng (window.map.getCenter ().lat () + unitLat, window.map.getCenter ().lng () + unitLng));
+      setTimeout (function () { mapMove (unitLat, unitLng, unitCount + 1, unit); }, 50);
+    }
+  }
+  function mapGo (will) {
+    var now = window.map.getCenter ();
+
+    var Unit = getUnit (will, now);
+    if (!Unit)
+      return false;
+    
+    mapMove (Unit.lat, Unit.lng, 0, Unit.unit);
+  }
   function initialize () {
 
-    map = initMap ();
-    markerInfos = initMarkerInfos (map, markerInfos);
-    Polyline = initPolyline (map, markerInfos);
-    var user1 = initUser (map);
-    var user2 = initUser (map);
+    window.map = initMap ();
+    window.markerInfos = initMarkerInfos (markerInfos);
+    if (!(window.map && window.markerInfos))
+      return console.error ('地圖資料初始化失敗');
 
-    var result = setUserStartPoint (user1, markerInfos);
+    Polyline = initPolyline ();
+    var user1 = initUser ();
+    var user2 = initUser ();
+
+    var result = setUserStartPoint (user1);
     if (!result)
       return console.error ('使用者初始化失敗');
 
-    result = setUserStartPoint (user2, markerInfos);
+    result = setUserStartPoint (user2);
     if (!result)
       return console.error ('使用者初始化失敗');
 
     $('#throw_dice').click (function () {
       // user1
-      userGo (user1, 3, markerInfos);
+      // userGo (user1, 3);
+      // userGo (user2, 3);
+      // mapGo (new google.maps.LatLng (23.572736819430755, 120.29828935861588));
 
     });
 
