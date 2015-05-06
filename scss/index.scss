@@ -5,8 +5,6 @@
 
 @import "_oa";
 
-$navbarHeight: 40px;
-
 @include font-face("Monaco", font-files("monaco/monaco.ttf", "monaco/monaco.otf"));
 
 * {
@@ -32,8 +30,6 @@ html {
     height: 100%;
     background: $mainBackgroundColor $mainBackgroundImage;
     color: rgba(50, 50, 50, 0.8);
-
-    // padding-top: $navbarHeight + 10px;
 
     @include font-smoothing(antialiased);
     @include box-shadow(none);
@@ -77,6 +73,39 @@ html {
       &:nth-child(2) { top: 0; right: -4px; width: 5px; border: 1px solid rgba(255, 255, 255, .9); @include box-shadow(0 0 10px rgba(0, 0, 0, 0.2)); }
       &:nth-child(3) { bottom: -4px; left: 0; height: 5px; border: 1px solid rgba(255, 255, 255, .9); @include box-shadow(0 0 10px rgba(0, 0, 0, 0.2)); }
       &:nth-child(4) { border: 1px solid rgba(255, 255, 255, .5); top: 0; left: -5px; width: 5px; }
+    }
+    .btns {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      display: inline-block;
+      width: 100%;
+      padding: 15px;
+      border: 1px solid rgba(39, 40, 34, .4);
+      background-color: rgba(255, 255, 255, .8);
+
+      @include border-radius(2px);
+      @include transition(all .3s);
+      @include box-shadow(0 0 15px 1px rgba(0, 0, 0, 0.2));
+
+      text-align: center;
+
+      > div {
+        display: inline-block;
+        margin: 0 auto;
+        @include clearfix();
+        @include clearfix();
+
+
+        .button {
+          float: left;
+          @include button();
+
+          + .button {
+            margin-left: 10px;
+          }
+        }
+      }
     }
   }
 }

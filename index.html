@@ -50,8 +50,9 @@
     <meta property="og:image:width" content="600" />
     <meta property="og:image:height" content="314" />
 
-    <link href="css/index.css" rel="stylesheet" type="text/css" />
     <link href="res/oa/oa-jelly.css" rel="stylesheet" type="text/css" />
+    <link href="css/pop_up.css" rel="stylesheet" type="text/css" />
+    <link href="css/index.css" rel="stylesheet" type="text/css" />
 
     <script src="res/jquery_v1.10.2/jquery-1.10.2.min.js" language="javascript" type="text/javascript" ></script>
     <script src="res/oa/oa-jelly.js" language="javascript" type="text/javascript" ></script>
@@ -68,6 +69,13 @@
         <i></i><i></i><i></i><i></i>
         <div id='map'></div>
         <button type='button' id='throw_dice'>擲骰子</button>
+        <div class='btns'>
+          <div>
+            <button class='button about'>關於</button>
+            <button class='button more'>更多</button>
+            <a class='button' href='https://github.com/comdan66/OA-richman' target='_blank'>GitHub</a>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -82,6 +90,10 @@
           <div class='bottom'></div>
         </div>
       </div>
+    </div>
+
+    <div id='pop_up' class='hide'>
+      <div class='paper'></div>
     </div>
 
   </body>
