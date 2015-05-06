@@ -310,7 +310,7 @@ $(function () {
     user.marker.setPosition (position);
     window.markerInfos[user.index].userCount += 1;
 
-    return true;
+    return position;
   }
   function getUnit (will, now) {
     var addLat = will.lat () - now.lat ();
@@ -337,8 +337,8 @@ $(function () {
       if (step > 1) {
         return userGo (user, step - 1);
       } else {
-        setUserStartPoint (user);
-        console.error ('s');
+        var position = setUserStartPoint (user);
+        mapGo (position);
       }
       return true;
     } else {
@@ -398,46 +398,10 @@ $(function () {
       return console.error ('使用者初始化失敗');
 
     $('#throw_dice').click (function () {
-      // user1
-      // userGo (user1, 3);
+      userGo (user1, 3);
       // userGo (user2, 3);
       // mapGo (new google.maps.LatLng (23.572736819430755, 120.29828935861588));
-
     });
-
-
-
-    // result = setUserStartPoint (user3, markerInfos);
-    // if (!result)
-    //   return console.error ('使用者初始化失敗');
-
-    // result = setUserStartPoint (user4, markerInfos);
-    // if (!result)
-    //   return console.error ('使用者初始化失敗');
-
-    // result = setUserStartPoint (user5, markerInfos);
-    // if (!result)
-    //   return console.error ('使用者初始化失敗');
-
-    // var user1Point = getUserAtPosition (user1, markerInfos[0]);
-    // setUserToPosition (user1, user1Point);
-
-    // var user2Point = getUserAtPosition (user2, markerInfos[0]);
-    // setUserToPosition (user2, user2Point);
-
-// console.error (markerInfos[0]);
-//     user = new google.maps.Marker ({
-//       map: map,
-//       draggable: false,
-//       position: markers[ni].position,
-//       icon: {
-//         path: userPath (),
-//         strokeColor: 'rgba(200, 0, 0, .9)',
-//         strokeWeight: 1,
-//         fillColor: 'rgba(200, 0, 0, .9)',
-//         fillOpacity: 0.5
-//       }
-//     });
 
 
     $loading.fadeOut (function () {
