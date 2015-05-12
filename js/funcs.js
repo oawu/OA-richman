@@ -30,7 +30,7 @@
       var unit = aveAdd < 10 ? aveAdd < 1 ? aveAdd < 0.1 ? aveAdd < 0.01 ? aveAdd < 0.001 ? aveAdd < 0.0001 ? 3 : 6 : 9 : 12 : 15 : 24 : 21;
       var lat = addLat / unit;
       var lng = addLng / unit;
-      
+
       if (!((Math.abs (lat) > 0) || (Math.abs (lng) > 0)))
         return null;
 
@@ -56,7 +56,7 @@
       var Unit = getUnit (will, now);
       if (!Unit)
         return false;
-      
+
       mapMove (Unit.lat, Unit.lng, 0, Unit.unit);
     };
 
@@ -66,6 +66,7 @@
         zoom: 16,
         scaleControl: true,
         navigationControl: false,
+        disableDoubleClickZoom: true,
         mapTypeControl: false,
         zoomControl: false,
         scrollwheel: false,
@@ -123,7 +124,7 @@
     };
 
     this.setUserPosition = function (position) {
-      
+
       if (position) {
         this.marker.setPosition (position);
         return this;
@@ -217,6 +218,6 @@
           })};
     };
   }
-  
+
   window.funcs = funcs;
 })();
