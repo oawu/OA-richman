@@ -60,8 +60,13 @@ $(function () {
     user.setPosition ();
     user.goStep (2);
 
+    var user2 = map.createUser ();
+    user2.setPosition ();
+
     $('#throw_dice').click (function () {
-    user.goStep (15);
+      user.goStep (5);
+    // user2.goStep (2);
+
       // console.error ('s');
     });
 
