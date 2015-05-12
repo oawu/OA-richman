@@ -41,23 +41,26 @@
       };
     };
 
-    var mapMove = function (unitLat, unitLng, unitCount, unit) {
+    var mapMove = function (unitLat, unitLng, unitCount, unit, callback) {
       if (unit > unitCount) {
         _map.setCenter (new google.maps.LatLng (_map.getCenter ().lat () + unitLat, _map.getCenter ().lng () + unitLng));
         setTimeout (function () {
-          mapMove (unitLat, unitLng, unitCount + 1, unit);
+          mapMove (unitLat, unitLng, unitCount + 1, unit, callback);
         }, 50);
+      } else {
+        if (callback)
+          callback ();
       }
     };
 
-    var mapGo = function (will) {
+    var mapGo = function (will, callback) {
       var now = _map.getCenter ();
 
       var Unit = getUnit (will, now);
       if (!Unit)
         return false;
 
-      mapMove (Unit.lat, Unit.lng, 0, Unit.unit);
+      mapMove (Unit.lat, Unit.lng, 0, Unit.unit, callback);
     };
 
 
@@ -78,12 +81,22 @@
       return this;
     };
 
-    this.initMarkerInfos = function (markerInfos) {
+    this.markerInfoBuild = function () {
 
+
+    };
+
+    this.initMarkerInfos = function (markerInfos) {
+      var that = this;
       _markerInfos = markerInfos.map (function (t) {
         t.userCount = 0;
         t.getPosition = function () { return this.position; };
         t.setPosition = function (p) { if (this.marker) this.marker.setPosition (p); return this; };
+        t.owner = null;
+        t.price = t.price;
+        t.title = t.title;
+        t.layer = 0;
+        t.build = that.markerInfoBuild;
 
         t.marker = new google.maps.Marker ({
           map: _map,
@@ -97,6 +110,22 @@
             fillOpacity: 0.5
           }
         });
+        // t.infoWindow = new InfoBubble ({
+        //               margin: 0, padding: 0, arrowStyle: 0,
+        //               borderWidth: 1, shadowStyle: 1, borderRadius: 2, minWidth: 'auto',
+        //               maxWidth: 'auto', minHeight: 'auto', maxHeight: 'auto',
+        //               borderColor: 'rgba(39, 40, 34, .7)', backgroundClassName: '',
+        //               content: $('<div />').addClass ('info_bubble').append ($('<div />').addClass ('img').append (
+        //                 $('<img />').attr ('src', t.info.src).attr ('alt', t.info.title).attr ('alt', t.info.title)).append (
+        //                 $('<div />').addClass ('title').text (t.info.title))).append (
+        //                 $('<div />').addClass ('items')
+        //                   .append ($('<div />').addClass ('item').html ('名稱: ' + t.info.title))
+        //                   .append ($('<div />').addClass ('item').html ('售價: ' + t.info.price))
+        //                   .append (t.info.items ? t.info.items.map (function (u) {return $('<div />').addClass ('item').html (u.item);}) : null)).append (
+        //                 $('<div />').addClass ('delete').html ('&#10006;').click (function () { t.infoWindow.close (); })).get (0)
+        //             });
+
+        // t.infoWindow.open (_map, t.marker);
 
         return t;
       });
@@ -164,6 +193,23 @@
       return this;
     };
 
+    this.userBuy = function (markerInfo) {
+      if (markerInfo.owner)
+        return false;
+
+      // if (!confirm ('是否購買' + markerInfo.title + '(' + markerInfo.price + '元)？'))
+      //   markerInfo.owner = null;
+
+      // markerInfo.owner = this;
+      markerInfo.build ();
+
+      return true;
+    };
+    this.userGoStop = function () {
+      this.setPosition ();
+      mapGo (this.getPosition (), !_markerInfos[this.index].owner ? this.buy.bind (this, _markerInfos[this.index]) : null);
+    };
+
     this.userMove = function (step, unitLat, unitLng, unitCount, unit) {
       if (unit <= unitCount) {
         this.index = (this.index + 1) % _markerInfos.length;
@@ -171,8 +217,7 @@
         if (step > 1) {
           return this.goStep (step - 1);
         } else {
-          this.setPosition ();
-          mapGo (this.getPosition ());
+            this.goStop ();
         }
         return true;
       } else {
@@ -203,6 +248,8 @@
         index: 0,
         move: this.userMove,
         goStep: this.userGoStep,
+        goStop: this.userGoStop,
+        buy: this.userBuy,
         setPosition: this.setUserPosition,
         getPosition: function () { return this.marker ? this.marker.getPosition () : null; },
         marker: new google.maps.Marker ({
