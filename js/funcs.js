@@ -69,6 +69,8 @@
         $_logs.append ($('<div />').text (text)).get (0).scrollTop = $_logs.get (0).scrollHeight;
     };
 
+    this.logs = logs;
+
     this.initMap = function ($map, option) {
       option = $.extend ({
         zoom: 16,
@@ -213,57 +215,80 @@
       if (_markerInfos[this.index].owner && _markerInfos[this.index].owner != this)
         return false;
 
-      if (autoBuy || confirm ((_markerInfos[this.index].layer ? '是否加蓋' : '是否購買') + _markerInfos[this.index].title + '(' + _markerInfos[this.index].price + '元)？')) {
-        if (this.quotaObj.text () > _markerInfos[this.index].price * (_markerInfos[this.index].layer + 1)) {
-          if (_markerInfos[this.index].toBuild ()) {
+      if (!(autoBuy || confirm ((_markerInfos[this.index].layer ? '是否加蓋' : '是否購買') + _markerInfos[this.index].title + '(' + _markerInfos[this.index].price + '元)？'))) {
+        _markerInfos[this.index].owner = null;
+        logs (this.name + ' 取消' + (_markerInfos[this.index].layer ? '加蓋' : '購買') + _markerInfos[this.index].title + '！');
+        return false;
+      }
 
-            _markerInfos[this.index].owner = this;
-            this.quotaObj.text (this.quotaObj.text () - _markerInfos[this.index].price * _markerInfos[this.index].layer);
-
-            if (_markerInfos[this.index].layer > 1)
-              logs (this.name + ': 房子加蓋了一層！');
-            else
-              logs (this.name + ': 蓋了一棟房子！');
-          } else {
-            alert ('系統錯誤！');
-          }
-        } else {
-          logs (this.name + ': 錢不夠，哭哭..');
-        }
-
-
+      if (this.quotaObj.text () < (_markerInfos[this.index].price * (_markerInfos[this.index].layer + 1))) {
+        logs (this.name + ' 錢不夠，哭哭..');
         return true;
       }
 
-      _markerInfos[this.index].owner = null;
+      if (!_markerInfos[this.index].toBuild ()) {
+        alert ('系統錯誤！');
+        location.reload ();
+      }
+
+      _markerInfos[this.index].owner = this;
+      this.quotaObj.text (this.quotaObj.text () - _markerInfos[this.index].price * _markerInfos[this.index].layer);
+
+      if (_markerInfos[this.index].layer > 1)
+        logs (this.name + ' 房子加蓋了一層！');
+      else
+        logs (this.name + ' 蓋了一棟房子！');
+
       return true;
     };
-    this.userGoStop = function (callback) {
+
+    this.userPayStep = function (autoBuy) {
+      if (!_markerInfos[this.index].owner || _markerInfos[this.index].owner == this)
+        return false;
+
+      var price = parseInt (_markerInfos[this.index].layer * _markerInfos[this.index].price, 10);
+
+      if (this.quotaObj.text () < price) {
+        alert (this.name + ' 破產了！');
+        location.reload ();
+      } else {
+        this.quotaObj.text (this.quotaObj.text () - price);
+        _markerInfos[this.index].owner.quotaObj.text (parseInt (_markerInfos[this.index].owner.quotaObj.text (), 10) + price);
+        logs (this.name + ' 付給了 ' + _markerInfos[this.index].owner.name + ' 過路費 ' + price + '元！');
+      }
+    };
+
+    this.userGoStop = function (autoRun) {
       this.setPosition ();
-      // mapGo (this.getPosition (), !_markerInfos[this.index].owner || (_markerInfos[this.index].owner == this) ? this.buy.bind (this, _markerInfos[this.index]) : null);
-      mapGo (this.getPosition (), callback ? callback.bind (this, _markerInfos[this.index]) : null);
+
+      mapGo (this.getPosition (), function (markerInfos) {
+        if
+          (markerInfos.owner && markerInfos.owner != this) this.payStep ();
+        else
+          this.buyStep (autoRun ? autoRun : false);
+      }.bind (this, _markerInfos[this.index]));
 
       return true;
     };
 
-    this.userMove = function (step, unitLat, unitLng, unitCount, unit, callback) {
+    this.userMove = function (step, unitLat, unitLng, unitCount, unit, autoRun) {
       if (unit <= unitCount) {
         this.index = (this.index + 1) % _markerInfos.length;
         if (step > 1)
-          return this.goStep (step - 1, callback);
+          return this.goStep (step - 1, autoRun);
         else
-          return this.goStop (callback);
+          return this.goStop (autoRun);
 
         return true;
       } else {
         this.setPosition (new google.maps.LatLng (this.getPosition ().lat () + unitLat, this.getPosition ().lng () + unitLng));
 
         setTimeout (function () {
-          this.move (step, unitLat, unitLng, unitCount + 1, unit, callback);
+          this.move (step, unitLat, unitLng, unitCount + 1, unit, autoRun);
         }.bind (this), 50);
       }
     };
-    this.userGoStep = function (step, callback) {
+    this.userGoStep = function (step, autoRun) {
       if (step < 1)
         return false;
 
@@ -275,7 +300,7 @@
         return false;
 
       _markerInfos[this.index].userCount -= 1;
-      this.move (step, Unit.lat, Unit.lng, 0, Unit.unit, callback);
+      this.move (step, Unit.lat, Unit.lng, 0, Unit.unit, autoRun);
     };
 
     this.createUser = function (name, $quota) {
@@ -287,6 +312,7 @@
         goStep: this.userGoStep,
         goStop: this.userGoStop,
         buyStep: this.userBuyStep,
+        payStep: this.userPayStep,
         setPosition: this.setUserPosition,
         getPosition: function () { return this.marker ? this.marker.getPosition () : null; },
         marker: new google.maps.Marker ({

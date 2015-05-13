@@ -51,10 +51,15 @@ $(function () {
     {position: new google.maps.LatLng (23.571478119226718, 120.30489563941956), title: '日興堂', price: 100},
     {position: new google.maps.LatLng (23.569523668242216, 120.30414193868637), title: '日興堂', price: 100},
     {position: new google.maps.LatLng (23.568901679626702, 120.30510485172272), title: '日興堂', price: 100},];
+
+// -------------------
+
+
     var map = new window.funcs ();
 
     if (!map.init ($('#map'), markerInfos, $('#logs')))
       return alert ('地圖資料初始化失敗');
+    map.logs ('地圖資料初始化成功，遊戲開始！');
 
     var user = map.createUser ('OA', $('#quota1 span'));
     user.setPosition ();
@@ -62,21 +67,11 @@ $(function () {
     var user2 = map.createUser ('NPC', $('#quota2 span'));
     user2.setPosition ();
 
-    user.goStep (2, function (markerInfos) {
-      if (markerInfos.owner && markerInfos.owner != this) {
-        //付費
-      } else {
-        //購買
-        this.buyStep ();
-      }
-    });
+    user.goStep (2, true);
 
     $('#throw_dice').click (function () {
-      user2.goStep (2, function () {
-        console.info (this.buyStep ());
-      });
+      user2.goStep (2);
     });
-
 
     $loading.fadeOut (function () {
       $(this).hide (function () {
