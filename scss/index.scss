@@ -66,8 +66,10 @@ html {
       right: 10px;
       top: 30px;
       padding: 10px;
+      font-weight: bold;
+      color: rgba(39, 40, 34, 1);
       border: 1px solid rgba(39, 40, 34, .4);
-      background-color: rgba(255, 255, 255, .8);
+      background-color: rgba(0, 0, 255, 0.2);
 
       @include border-radius(2px);
       @include transition(all .3s);
@@ -78,8 +80,8 @@ html {
       }
     }
     #quota2 {
-      right: auto;
-      left: 10px;
+      top: 90px;
+      background-color: rgba(0, 128, 0, 0.3);
     }
     i {
       position: absolute;

@@ -303,7 +303,7 @@
       this.move (step, Unit.lat, Unit.lng, 0, Unit.unit, autoRun);
     };
 
-    this.createUser = function (name, $quota) {
+    this.createUser = function (name, $quota, color) {
       return {
         index: 0,
         name: name,
@@ -320,9 +320,9 @@
             draggable: false,
             icon: {
               path: userPath (),
-              strokeColor: 'rgba(200, 0, 0, .9)',
+              strokeColor: color,
               strokeWeight: 1,
-              fillColor: 'rgba(200, 0, 0, .9)',
+              fillColor: color,
               fillOpacity: 0.5
             }
           })};

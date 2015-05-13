@@ -53,7 +53,13 @@ $(function () {
     {position: new google.maps.LatLng (23.568901679626702, 120.30510485172272), title: '日興堂', price: 100},];
 
 // -------------------
-
+    var name1 = '玩家';
+    var name2 = '電腦';
+    // do {
+    //   name1 = prompt ("請輸入您的暱稱吧！", name);
+    // } while (name1.length <= 0);
+    $('#quota1 b').text (name1);
+    $('#quota2 b').text (name2);
 
     var map = new window.funcs ();
 
@@ -61,17 +67,17 @@ $(function () {
       return alert ('地圖資料初始化失敗');
     map.logs ('地圖資料初始化成功，遊戲開始！');
 
-    var user = map.createUser ('OA', $('#quota1 span'));
+    var user = map.createUser (name1, $('#quota1 span'), 'rgba(0, 0, 255, 0.9)');
     user.setPosition ();
 
-    var user2 = map.createUser ('NPC', $('#quota2 span'));
+    var user2 = map.createUser (name2, $('#quota2 span'), 'rgba(0, 128, 0, 0.9)');
     user2.setPosition ();
 
-    user.goStep (2, true);
+    // user.goStep (2, true);
 
-    $('#throw_dice').click (function () {
-      user2.goStep (2);
-    });
+    // $('#throw_dice').click (function () {
+    //   user2.goStep (2);
+    // });
 
     $loading.fadeOut (function () {
       $(this).hide (function () {
