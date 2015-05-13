@@ -53,21 +53,28 @@ $(function () {
     {position: new google.maps.LatLng (23.568901679626702, 120.30510485172272), title: '日興堂', price: 100},];
     var map = new window.funcs ();
 
-    if (!map.init ($('#map'), markerInfos))
+    if (!map.init ($('#map'), markerInfos, $('#logs')))
       return alert ('地圖資料初始化失敗');
 
-    var user = map.createUser ();
+    var user = map.createUser ('OA', $('#quota1 span'));
     user.setPosition ();
-    user.goStep (2);
 
-    var user2 = map.createUser ();
+    var user2 = map.createUser ('NPC', $('#quota2 span'));
     user2.setPosition ();
 
-    $('#throw_dice').click (function () {
-      user.goStep (5);
-    // user2.goStep (2);
+    user.goStep (2, function (markerInfos) {
+      if (markerInfos.owner && markerInfos.owner != this) {
+        //付費
+      } else {
+        //購買
+        this.buyStep ();
+      }
+    });
 
-      // console.error ('s');
+    $('#throw_dice').click (function () {
+      user2.goStep (2, function () {
+        console.info (this.buyStep ());
+      });
     });
 
 

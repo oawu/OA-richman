@@ -61,7 +61,7 @@ html {
       font-size: 20px;
       width: 200px;
     }
-    #quota {
+    #quota1, #quota2 {
       position: absolute;
       right: 10px;
       top: 30px;
@@ -77,6 +77,10 @@ html {
         margin: 0 5px;
       }
     }
+    #quota2 {
+      right: auto;
+      left: 10px;
+    }
     i {
       position: absolute;
       display: block;
@@ -90,15 +94,16 @@ html {
       &:nth-child(3) { bottom: -4px; left: 0; height: 5px; border: 1px solid rgba(255, 255, 255, .9); @include box-shadow(0 0 10px rgba(0, 0, 0, 0.2)); }
       &:nth-child(4) { border: 1px solid rgba(255, 255, 255, .5); top: 0; left: -5px; width: 5px; }
     }
-    .btns {
+    #logs {
       position: absolute;
       left: 0;
       bottom: 0;
-      display: inline-block;
       width: 100%;
+      height: 100px;
       padding: 15px;
       border: 1px solid rgba(39, 40, 34, .4);
       background-color: rgba(255, 255, 255, .8);
+      overflow-y: auto;
 
       @include border-radius(2px);
       @include transition(all .3s);
@@ -107,19 +112,19 @@ html {
       text-align: center;
 
       > div {
-        display: inline-block;
         margin: 0 auto;
-        @include clearfix();
-        @include clearfix();
+        text-align: left;
+        @include overflow-docx3();
 
-
-        .button {
-          float: left;
-          @include button();
-
-          + .button {
-            margin-left: 10px;
-          }
+        &:first-child {
+          font-size: 16px;
+          font-weight: bold;
+          border-bottom: 1px solid rgba(39, 40, 34, .1);
+          margin-bottom: 5px;
+          padding-bottom: 5px;
+        }
+        &:not(:first-child) {
+          padding-left: 10px;
         }
       }
     }

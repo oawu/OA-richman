@@ -8,6 +8,7 @@
     var _map = null;
     var _markerInfos = null;
     var _polyline = null;
+    var $_logs = null;
 
     var circlePath = function (r) {
       return 'M 0 0 m -' + r + ', 0 '+
@@ -63,6 +64,10 @@
       mapMove (Unit.lat, Unit.lng, 0, Unit.unit, callback);
     };
 
+    var logs = function (text) {
+      if ($_logs && text)
+        $_logs.append ($('<div />').text (text)).get (0).scrollTop = $_logs.get (0).scrollHeight;
+    };
 
     this.initMap = function ($map, option) {
       option = $.extend ({
@@ -103,8 +108,7 @@
         icon: 'img/map/House-' + this.layer + '-icon.png'
       });
 
-
-
+      return true;
     };
 
     this.initMarkerInfos = function (markerInfos) {
@@ -151,11 +155,14 @@
       return this;
     };
 
-    this.init = function ($map, markerInfos) {
+    this.init = function ($map, markerInfos, $logs) {
       try {
         this.initMap ($map)
             .initMarkerInfos (markerInfos)
             .initPolyline ();
+
+        if ($logs)
+          $_logs = $logs;
 
         return _map && _markerInfos && _polyline ? true : false;
       } catch (err) { return false; }
@@ -202,45 +209,61 @@
       return this;
     };
 
-    this.userBuy = function (markerInfo) {
-      if (markerInfo.owner && markerInfo.owner != this)
+    this.userBuyStep = function (autoBuy) {
+      if (_markerInfos[this.index].owner && _markerInfos[this.index].owner != this)
         return false;
 
+      if (autoBuy || confirm ((_markerInfos[this.index].layer ? '是否加蓋' : '是否購買') + _markerInfos[this.index].title + '(' + _markerInfos[this.index].price + '元)？')) {
+        if (this.quotaObj.text () > _markerInfos[this.index].price * (_markerInfos[this.index].layer + 1)) {
+          if (_markerInfos[this.index].toBuild ()) {
 
-      if (!confirm ('是否購買' + markerInfo.title + '(' + markerInfo.price + '元)？')) {
-        markerInfo.owner = null;
+            _markerInfos[this.index].owner = this;
+            this.quotaObj.text (this.quotaObj.text () - _markerInfos[this.index].price * _markerInfos[this.index].layer);
+
+            if (_markerInfos[this.index].layer > 1)
+              logs (this.name + ': 房子加蓋了一層！');
+            else
+              logs (this.name + ': 蓋了一棟房子！');
+          } else {
+            alert ('系統錯誤！');
+          }
+        } else {
+          logs (this.name + ': 錢不夠，哭哭..');
+        }
+
+
         return true;
       }
 
-      markerInfo.owner = this;
-      markerInfo.toBuild ();
+      _markerInfos[this.index].owner = null;
+      return true;
+    };
+    this.userGoStop = function (callback) {
+      this.setPosition ();
+      // mapGo (this.getPosition (), !_markerInfos[this.index].owner || (_markerInfos[this.index].owner == this) ? this.buy.bind (this, _markerInfos[this.index]) : null);
+      mapGo (this.getPosition (), callback ? callback.bind (this, _markerInfos[this.index]) : null);
 
       return true;
     };
-    this.userGoStop = function () {
-      this.setPosition ();
-      mapGo (this.getPosition (), !_markerInfos[this.index].owner || (_markerInfos[this.index].owner == this) ? this.buy.bind (this, _markerInfos[this.index]) : null);
-    };
 
-    this.userMove = function (step, unitLat, unitLng, unitCount, unit) {
+    this.userMove = function (step, unitLat, unitLng, unitCount, unit, callback) {
       if (unit <= unitCount) {
         this.index = (this.index + 1) % _markerInfos.length;
+        if (step > 1)
+          return this.goStep (step - 1, callback);
+        else
+          return this.goStop (callback);
 
-        if (step > 1) {
-          return this.goStep (step - 1);
-        } else {
-            this.goStop ();
-        }
         return true;
       } else {
         this.setPosition (new google.maps.LatLng (this.getPosition ().lat () + unitLat, this.getPosition ().lng () + unitLng));
 
         setTimeout (function () {
-          this.move (step, unitLat, unitLng, unitCount + 1, unit);
+          this.move (step, unitLat, unitLng, unitCount + 1, unit, callback);
         }.bind (this), 50);
       }
     };
-    this.userGoStep = function (step) {
+    this.userGoStep = function (step, callback) {
       if (step < 1)
         return false;
 
@@ -252,16 +275,18 @@
         return false;
 
       _markerInfos[this.index].userCount -= 1;
-      this.move (step, Unit.lat, Unit.lng, 0, Unit.unit);
+      this.move (step, Unit.lat, Unit.lng, 0, Unit.unit, callback);
     };
 
-    this.createUser = function () {
+    this.createUser = function (name, $quota) {
       return {
         index: 0,
+        name: name,
+        quotaObj: $quota,
         move: this.userMove,
         goStep: this.userGoStep,
         goStop: this.userGoStop,
-        buy: this.userBuy,
+        buyStep: this.userBuyStep,
         setPosition: this.setUserPosition,
         getPosition: function () { return this.marker ? this.marker.getPosition () : null; },
         marker: new google.maps.Marker ({
