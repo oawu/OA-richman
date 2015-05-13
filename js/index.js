@@ -12,6 +12,7 @@ $(function () {
     var $runDice = $('#run_dice');
     var $dice = $('#dice');
     var $popUp = $('#pop_up');
+    var $throwDice = $('#throw_dice');
 
     var popUp = [
       {t: '關於 OA-richman', is: [
@@ -65,19 +66,45 @@ $(function () {
 
     if (!map.init ($('#map'), markerInfos, $('#logs')))
       return alert ('地圖資料初始化失敗');
-    map.logs ('地圖資料初始化成功，遊戲開始！');
+    map.logs ('地圖資料初始化成功！', 'title');
 
-    var user = map.createUser (name1, $('#quota1 span'), 'rgba(0, 0, 255, 0.9)');
-    user.setPosition ();
+    var user1 = map.createUser (name1, $('#quota1 span'), 'rgba(0, 0, 255, 0.9)');
+    user1.setPosition ();
 
     var user2 = map.createUser (name2, $('#quota2 span'), 'rgba(0, 128, 0, 0.9)');
     user2.setPosition ();
 
-    // user.goStep (2, true);
+    map.logs ('使用者初始化成功！', 'title');
+    map.logs ('遊戲開始，請擲骰子吧！', 'title');
 
-    // $('#throw_dice').click (function () {
-    //   user2.goStep (2);
-    // });
+
+    $throwDice.click (function () {
+      $throwDice.prop ('disabled', true);
+
+      var step = Math.floor ((Math.random () * 6) + 1);
+      $dice.attr ('class', 'show' + step);
+
+      $runDice.fadeIn (function () {
+        for (var nStep = Math.floor ((Math.random () * 6) + 1); nStep == step; nStep = Math.floor ((Math.random () * 6) + 1));
+
+        $dice.attr ('class', 'show' + nStep);
+        map.logs (user1.name + ' 擲出 ' + nStep + ' 點！');
+
+        setTimeout (function () {
+          $runDice.fadeOut (function () { user1.goStep (nStep, false, function () {
+            map.logs ('換 ' + user2.name + ' 擲骰子！', 'title');
+
+            nStep = Math.floor ((Math.random () * 6) + 1);
+            map.logs (user2.name + ' 擲出 ' + nStep + ' 點！');
+
+            user2.goStep (2, true, function () {
+              $throwDice.prop ('disabled', false);
+              map.logs ('換 ' + user1.name + ' 擲骰子！', 'title');
+            });
+          }); });
+        }, 800);
+      });
+    });
 
     $loading.fadeOut (function () {
       $(this).hide (function () {

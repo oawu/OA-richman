@@ -64,7 +64,14 @@ html {
     #quota1, #quota2 {
       position: absolute;
       right: 10px;
-      top: 30px;
+
+      // @media screen and (min-width: 0px) and (max-width: 649px) {
+        bottom: 140px;
+      // }
+      // @media screen and (min-width: 650px) {
+      //   top: 30px;
+      // }
+
       padding: 10px;
       font-weight: bold;
       color: rgba(39, 40, 34, 1);
@@ -80,7 +87,13 @@ html {
       }
     }
     #quota2 {
-      top: 90px;
+      right: auto;
+      left: 10px;
+      // @media screen and (min-width: 0px) and (max-width: 649px) {
+      // }
+      // @media screen and (min-width: 650px) {
+      //   top: 90px;
+      // }
       background-color: rgba(0, 128, 0, 0.3);
     }
     i {
@@ -101,7 +114,7 @@ html {
       left: 0;
       bottom: 0;
       width: 100%;
-      height: 100px;
+      height: 130px;
       padding: 15px;
       border: 1px solid rgba(39, 40, 34, .4);
       background-color: rgba(255, 255, 255, .8);
@@ -118,15 +131,36 @@ html {
         text-align: left;
         @include overflow-docx3();
 
-        &:first-child {
+        // &:first-child {
+        //   font-size: 16px;
+        //   font-weight: bold;
+        //   border-bottom: 1px solid rgba(39, 40, 34, .1);
+        //   margin-bottom: 5px;
+        //   padding-bottom: 5px;
+        // }
+        &.title {
           font-size: 16px;
           font-weight: bold;
-          border-bottom: 1px solid rgba(39, 40, 34, .1);
+          border-bottom: 1px solid rgba(39, 40, 34, .2);
           margin-bottom: 5px;
           padding-bottom: 5px;
+
         }
-        &:not(:first-child) {
-          padding-left: 10px;
+        &.log {
+          padding: 0 20px;
+          @include split-right(150px);
+          .l, .r {
+          }
+          .r {
+            text-align: right;
+            font-size: 13px;
+          }
+          + .log {
+            margin-top: 5px;
+          }
+          + .title {
+            margin-top: 10px;
+          }
         }
       }
     }

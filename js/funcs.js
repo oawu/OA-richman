@@ -64,9 +64,16 @@
       mapMove (Unit.lat, Unit.lng, 0, Unit.unit, callback);
     };
 
-    var logs = function (text) {
-      if ($_logs && text)
-        $_logs.append ($('<div />').text (text)).get (0).scrollTop = $_logs.get (0).scrollHeight;
+    var logs = function (text, className) {
+      if (!($_logs && text))
+        return;
+      if (className === 'title')
+        $_logs.append ($('<div />').addClass ('title').text (text));
+      else
+        $_logs.append ($('<div />').addClass ('log').append ($('<div />').addClass ('l').text (text)).append ($('<div />').addClass ('r').text ('asd')));
+
+      var _logs = $_logs.get (0);
+      _logs.scrollTop = _logs.scrollHeight;
     };
 
     this.logs = logs;
@@ -258,7 +265,7 @@
       }
     };
 
-    this.userGoStop = function (autoRun) {
+    this.userGoStop = function (autoRun, callback) {
       this.setPosition ();
 
       mapGo (this.getPosition (), function (markerInfos) {
@@ -266,29 +273,33 @@
           (markerInfos.owner && markerInfos.owner != this) this.payStep ();
         else
           this.buyStep (autoRun ? autoRun : false);
+
+        if (callback)
+          callback ();
+
       }.bind (this, _markerInfos[this.index]));
 
       return true;
     };
 
-    this.userMove = function (step, unitLat, unitLng, unitCount, unit, autoRun) {
+    this.userMove = function (step, unitLat, unitLng, unitCount, unit, autoRun, callback) {
       if (unit <= unitCount) {
         this.index = (this.index + 1) % _markerInfos.length;
         if (step > 1)
-          return this.goStep (step - 1, autoRun);
+          return this.goStep (step - 1, autoRun, callback);
         else
-          return this.goStop (autoRun);
+          return this.goStop (autoRun, callback);
 
         return true;
       } else {
         this.setPosition (new google.maps.LatLng (this.getPosition ().lat () + unitLat, this.getPosition ().lng () + unitLng));
 
         setTimeout (function () {
-          this.move (step, unitLat, unitLng, unitCount + 1, unit, autoRun);
+          this.move (step, unitLat, unitLng, unitCount + 1, unit, autoRun, callback);
         }.bind (this), 50);
       }
     };
-    this.userGoStep = function (step, autoRun) {
+    this.userGoStep = function (step, autoRun, callback) {
       if (step < 1)
         return false;
 
@@ -300,11 +311,12 @@
         return false;
 
       _markerInfos[this.index].userCount -= 1;
-      this.move (step, Unit.lat, Unit.lng, 0, Unit.unit, autoRun);
+      this.move (step, Unit.lat, Unit.lng, 0, Unit.unit, autoRun, callback);
     };
 
     this.createUser = function (name, $quota, color) {
       return {
+        // id:
         index: 0,
         name: name,
         quotaObj: $quota,
