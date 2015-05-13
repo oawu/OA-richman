@@ -8,6 +8,8 @@
     var _map = null;
     var _markerInfos = null;
     var _polyline = null;
+    var $_logs = null;
+    var _userCount = 0;
 
     var circlePath = function (r) {
       return 'M 0 0 m -' + r + ', 0 '+
@@ -41,25 +43,46 @@
       };
     };
 
-    var mapMove = function (unitLat, unitLng, unitCount, unit) {
+    var mapMove = function (unitLat, unitLng, unitCount, unit, callback) {
       if (unit > unitCount) {
         _map.setCenter (new google.maps.LatLng (_map.getCenter ().lat () + unitLat, _map.getCenter ().lng () + unitLng));
         setTimeout (function () {
-          mapMove (unitLat, unitLng, unitCount + 1, unit);
+          mapMove (unitLat, unitLng, unitCount + 1, unit, callback);
         }, 50);
+      } else {
+        if (callback)
+          callback ();
       }
     };
 
-    var mapGo = function (will) {
+    var mapGo = function (will, callback) {
       var now = _map.getCenter ();
 
       var Unit = getUnit (will, now);
       if (!Unit)
         return false;
 
-      mapMove (Unit.lat, Unit.lng, 0, Unit.unit);
+      mapMove (Unit.lat, Unit.lng, 0, Unit.unit, callback);
+    };
+    var nowTime = function () {
+      var d = new Date ();
+      // return d.getFullYear () + '-' + ("0" + (d.getMonth () + 1)).slice (-2) + '-' + ('0' + d.getDate ()).slice (-2) + ' ' + d.getHours () + ':' + d.getMinutes () + ':' + d.getSeconds ();
+      return d.getHours () + ':' + d.getMinutes () + ':' + d.getSeconds ();
+    };
+    var logs = function (text, className) {
+      if (!($_logs && text))
+        return;
+
+      if (className === 'title')
+        $_logs.append ($('<div />').addClass ('title').text (text));
+      else
+        $_logs.append ($('<div />').addClass ('log').append ($('<div />').addClass ('l').text (text)).append ($('<div />').addClass ('r').text (nowTime ())));
+
+      var _logs = $_logs.get (0);
+      _logs.scrollTop = _logs.scrollHeight;
     };
 
+    this.logs = logs;
 
     this.initMap = function ($map, option) {
       option = $.extend ({
@@ -78,12 +101,46 @@
       return this;
     };
 
-    this.initMarkerInfos = function (markerInfos) {
+    this.markerInfoToBuild = function (user) {
+      this.layer += 1;
 
-      _markerInfos = markerInfos.map (function (t) {
+      var prevHeading = (360 + google.maps.geometry.spherical.computeHeading (this.getPosition (), this.prev.getPosition ())) % 360;
+      var nextHeading = (360 + google.maps.geometry.spherical.computeHeading (this.getPosition (), this.next.getPosition ())) % 360;
+      var heading = Math.abs (nextHeading - prevHeading);
+
+      if (heading < 180)
+        heading = Math.max (prevHeading, nextHeading) + (360 - heading) / 2;
+      else
+        heading = Math.min (prevHeading, nextHeading) + heading / 2;
+
+      if(this.build)
+        this.build.setMap (null);
+
+      this.build = new google.maps.Marker ({
+        map: _map,
+        draggable: false,
+        position: google.maps.geometry.spherical.computeOffset (this.getPosition (), 80, heading),
+        icon: 'img/map/build/h' + user.id + '_' + this.layer + '.png'
+      });
+
+      return true;
+    };
+
+    this.initMarkerInfos = function (markerInfos) {
+      var that = this;
+      _markerInfos = markerInfos.map (function (t, i) {
+        t.i = i;
+        t.next = markerInfos[(i + 1) % markerInfos.length];
+        t.prev = markerInfos[(i + markerInfos.length - 1) % markerInfos.length];
+
         t.userCount = 0;
         t.getPosition = function () { return this.position; };
         t.setPosition = function (p) { if (this.marker) this.marker.setPosition (p); return this; };
+        t.owner = null;
+        t.price = t.price;
+        t.title = t.title;
+        t.layer = 0;
+        t.toBuild = that.markerInfoToBuild;
 
         t.marker = new google.maps.Marker ({
           map: _map,
@@ -106,18 +163,21 @@
     this.initPolyline = function () {
       _polyline = new google.maps.Polyline ({
         map: _map,
-        path: _markerInfos.map (function (t) { return t.marker.getPosition (); }),
+        path: _markerInfos.map (function (t) { return t.marker.getPosition (); }).concat ([_markerInfos[0].marker.getPosition ()]),
         strokeColor: 'rgba(102, 217, 239, .5)',
         strokeWeight: 10
       });
       return this;
     };
 
-    this.init = function ($map, markerInfos) {
+    this.init = function ($map, markerInfos, $logs) {
       try {
         this.initMap ($map)
             .initMarkerInfos (markerInfos)
             .initPolyline ();
+
+        if ($logs)
+          $_logs = $logs;
 
         return _map && _markerInfos && _polyline ? true : false;
       } catch (err) { return false; }
@@ -164,26 +224,88 @@
       return this;
     };
 
-    this.userMove = function (step, unitLat, unitLng, unitCount, unit) {
+    this.userBuyStep = function (autoBuy) {
+      if (_markerInfos[this.index].owner && _markerInfos[this.index].owner != this)
+        return false;
+
+      if (!(autoBuy || confirm ((_markerInfos[this.index].layer ? '是否加蓋' : '是否購買') + _markerInfos[this.index].title + '(' + _markerInfos[this.index].price + '元)？'))) {
+        _markerInfos[this.index].owner = null;
+        logs (this.name + ' 取消' + (_markerInfos[this.index].layer ? '加蓋' : '購買') + _markerInfos[this.index].title + '！');
+        return false;
+      }
+
+      if (this.quotaObj.text () < _markerInfos[this.index].price) {
+        logs (this.name + ' 錢不夠，哭哭..');
+        return true;
+      }
+
+      if (!_markerInfos[this.index].toBuild (this)) {
+        alert ('系統錯誤！');
+        location.reload ();
+      }
+
+      _markerInfos[this.index].owner = this;
+      this.quotaObj.text (this.quotaObj.text () - _markerInfos[this.index].price);
+
+      if (_markerInfos[this.index].layer > 1)
+        logs (this.name + ' 房子加蓋了一層！');
+      else
+        logs (this.name + ' 蓋了一棟房子！');
+
+      return true;
+    };
+
+    this.userPayStep = function (autoBuy) {
+      if (!_markerInfos[this.index].owner || _markerInfos[this.index].owner == this)
+        return false;
+
+      var price = parseInt (_markerInfos[this.index].layer * _markerInfos[this.index].price, 10);
+
+      if (this.quotaObj.text () < price) {
+        alert (this.name + ' 破產了！');
+        location.reload ();
+      } else {
+        this.quotaObj.text (this.quotaObj.text () - price);
+        _markerInfos[this.index].owner.quotaObj.text (parseInt (_markerInfos[this.index].owner.quotaObj.text (), 10) + price);
+        logs (this.name + ' 付給了 ' + _markerInfos[this.index].owner.name + ' 過路費 ' + price + '元！');
+      }
+    };
+
+    this.userGoStop = function (autoRun, callback) {
+      this.setPosition ();
+
+      mapGo (this.getPosition (), function (markerInfos) {
+        if
+          (markerInfos.owner && markerInfos.owner != this) this.payStep ();
+        else
+          this.buyStep (autoRun ? autoRun : false);
+
+        if (callback)
+          callback ();
+
+      }.bind (this, _markerInfos[this.index]));
+
+      return true;
+    };
+
+    this.userMove = function (step, unitLat, unitLng, unitCount, unit, autoRun, callback) {
       if (unit <= unitCount) {
         this.index = (this.index + 1) % _markerInfos.length;
+        if (step > 1)
+          return this.goStep (step - 1, autoRun, callback);
+        else
+          return this.goStop (autoRun, callback);
 
-        if (step > 1) {
-          return this.goStep (step - 1);
-        } else {
-          this.setPosition ();
-          mapGo (this.getPosition ());
-        }
         return true;
       } else {
         this.setPosition (new google.maps.LatLng (this.getPosition ().lat () + unitLat, this.getPosition ().lng () + unitLng));
 
         setTimeout (function () {
-          this.move (step, unitLat, unitLng, unitCount + 1, unit);
+          this.move (step, unitLat, unitLng, unitCount + 1, unit, autoRun, callback);
         }.bind (this), 50);
       }
     };
-    this.userGoStep = function (step) {
+    this.userGoStep = function (step, autoRun, callback) {
       if (step < 1)
         return false;
 
@@ -195,14 +317,20 @@
         return false;
 
       _markerInfos[this.index].userCount -= 1;
-      this.move (step, Unit.lat, Unit.lng, 0, Unit.unit);
+      this.move (step, Unit.lat, Unit.lng, 0, Unit.unit, autoRun, callback);
     };
 
-    this.createUser = function () {
+    this.createUser = function (name, $quota, color) {
       return {
+        id: _userCount++,
         index: 0,
+        name: name,
+        quotaObj: $quota,
         move: this.userMove,
         goStep: this.userGoStep,
+        goStop: this.userGoStop,
+        buyStep: this.userBuyStep,
+        payStep: this.userPayStep,
         setPosition: this.setUserPosition,
         getPosition: function () { return this.marker ? this.marker.getPosition () : null; },
         marker: new google.maps.Marker ({
@@ -210,9 +338,9 @@
             draggable: false,
             icon: {
               path: userPath (),
-              strokeColor: 'rgba(200, 0, 0, .9)',
+              strokeColor: color,
               strokeWeight: 1,
-              fillColor: 'rgba(200, 0, 0, .9)',
+              fillColor: color,
               fillOpacity: 0.5
             }
           })};

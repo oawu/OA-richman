@@ -6,46 +6,53 @@
 $(function () {
 
   function initialize () {
-    var $loading = $('<div />').attr ('id', 'loading')
-                               .append ($('<div />'))
-                               .appendTo ($('body'));
-    var $runDice = $('#run_dice');
+
     var $dice = $('#dice');
-    var $popUp = $('#pop_up');
+    var $loading = $('#loading');
+    var $runDice = $('#run_dice');
+    var $throwDice = $('#throw_dice');
 
-    var popUp = [
-      {t: '關於 OA-richman', is: [
-        {t: '作者名稱', h: 'http://www.ioa.tw', c: 'OA Wu'},
-        {t: 'E-mail', h: '', c: 'comdan66@gmail.com'},
-        {t: '作品名稱', h: '', c: 'OA-richman'},
-        {t: '最新版本', h: '', c: '1.0.0'},
-        {t: 'GitHub', h: 'https://github.com/comdan66/OA-richman', c: 'OA-richman'},
-        {t: '相關資源', h: 'https://developers.google.com/maps/documentation/javascript/markers', c: 'Google maps API'},
-        {t: '更新日期', h: '', c: '2015/05/05'},
-      ]},
-      {t: '更多相關作品', is: [
-        {t: 'Material Design UI', h: 'https://github.com/comdan66/OA-material', c: 'OA-material'},
-        {t: '北港迎媽祖', h: 'http://comdan66.github.io/matsu/2015/din-tao_map-19an.html', c: 'OA-matsu'},
-        {t: 'Js 迷宮', h: 'https://github.com/comdan66/OA-maze', c: 'OA-maze'},
-        {t: 'Js imgLiquid', h: 'https://github.com/comdan66/OA-imgLiquid', c: 'OA-imgLiquid'},
-        {t: '導航列', h: 'https://github.com/comdan66/OA-navbar', c: 'OA-navbar'},
-        {t: 'Js Slider View', h: 'https://github.com/comdan66/OA-scrollSliderView', c: 'OA-scrollSliderView'},
-        {t: 'Youtube Play List', h: 'https://github.com/comdan66/u2', c: 'OA-u2'},
-      ]}
-
+    var markerInfos = [
+      {position: new google.maps.LatLng (23.568086083371814, 120.30466228723526), title: '北港朝天宮', price: 1000},
+      {position: new google.maps.LatLng (23.564542759763924, 120.30401922762394), title: '日興堂餅店', price: 300},
+      {position: new google.maps.LatLng (23.565024632804803, 120.30178427696228), title: '北港大橋', price: 100},
+      {position: new google.maps.LatLng (23.568382943785544, 120.3024172782898), title: '仁愛眼鏡', price: 400},
+      {position: new google.maps.LatLng (23.56869271045844, 120.30137121677399), title: '北港圓環', price: 300},
+      {position: new google.maps.LatLng (23.569646590544906, 120.3018057346344), title: '第一銀行', price: 300},
+      {position: new google.maps.LatLng (23.570438207418054, 120.29966801404953), title: '麥當勞', price: 350},
+      {position: new google.maps.LatLng (23.572139430017806, 120.30015349388123), title: '黑仔當歸鴨', price: 400},
+      {position: new google.maps.LatLng (23.571205235364623, 120.30257821083069), title: '85度C ', price: 300},
+      {position: new google.maps.LatLng (23.569961271115567, 120.30586391687393), title: '廟後街', price: 200},
     ];
-    
-    var markerInfos = [{position: new google.maps.LatLng (23.568038757736595, 120.30465692281723)}, {position: new google.maps.LatLng (23.565363909701762, 120.30417948961258)}, {position: new google.maps.LatLng (23.564550135385016, 120.30402392148972)}, {position: new google.maps.LatLng (23.565029549867546, 120.30180037021637)}, {position: new google.maps.LatLng (23.56839031919102, 120.30243337154388)}, {position: new google.maps.LatLng (23.568697627383873, 120.30138731002808)}, {position: new google.maps.LatLng (23.57121506902716, 120.30256748199463)}, {position: new google.maps.LatLng (23.572736819430755, 120.29828935861588)}, {position: new google.maps.LatLng (23.5747059726961, 120.29707431793213)}, {position: new google.maps.LatLng (23.576242432573448, 120.3018781542778)}, {position: new google.maps.LatLng (23.57265323424432, 120.30320584774017)}, {position: new google.maps.LatLng (23.57215172200842, 120.3030127286911)}, {position: new google.maps.LatLng (23.571478119226718, 120.30489563941956)}, {position: new google.maps.LatLng (23.569523668242216, 120.30414193868637)}, {position: new google.maps.LatLng (23.568901679626702, 120.30510485172272)}];
+
+    var name1 = '玩家';
+    var name2 = '電腦';
+    // name1 = prompt ("請輸入您的暱稱吧！", name);
+    // if (!name1 || name1.length <= 0)
+    //   name1 = '玩家';
+
+    $('#quota1 b').text (name1);
+    $('#quota2 b').text (name2);
 
     var map = new window.funcs ();
-    
-    if (!map.init ($('#map'), markerInfos))
+
+    if (!map.init ($('#map'), markerInfos, $('#logs')))
       return alert ('地圖資料初始化失敗');
+    map.logs ('地圖資料初始化成功！', 'title');
 
-    var user = map.createUser ();
-    user.setPosition ();
+    var user1 = map.createUser (name1, $('#quota1 span'), 'rgba(0, 0, 255, 0.9)');
+    user1.setPosition ();
 
-    $('#throw_dice').click (function () {
+    var user2 = map.createUser (name2, $('#quota2 span'), 'rgba(0, 128, 0, 0.9)');
+    user2.setPosition ();
+
+    map.logs ('使用者初始化成功！', 'title');
+    map.logs ('遊戲開始，請擲骰子吧！', 'title');
+
+
+    $throwDice.click (function () {
+      $throwDice.prop ('disabled', true);
+
       var step = Math.floor ((Math.random () * 6) + 1);
       $dice.attr ('class', 'show' + step);
 
@@ -53,35 +60,22 @@ $(function () {
         for (var nStep = Math.floor ((Math.random () * 6) + 1); nStep == step; nStep = Math.floor ((Math.random () * 6) + 1));
 
         $dice.attr ('class', 'show' + nStep);
+        map.logs (user1.name + ' 擲出 ' + nStep + ' 點！');
 
         setTimeout (function () {
-          $runDice.fadeOut (function () { user.goStep (nStep); });
+          $runDice.fadeOut (function () { user1.goStep (nStep, false, function () {
+            map.logs ('換 ' + user2.name + ' 擲骰子！', 'title');
+
+            nStep = Math.floor ((Math.random () * 6) + 1);
+            map.logs (user2.name + ' 擲出 ' + nStep + ' 點！');
+
+            user2.goStep (2, true, function () {
+              $throwDice.prop ('disabled', false);
+              map.logs ('換 ' + user1.name + ' 擲骰子！', 'title');
+            });
+          }); });
         }, 800);
       });
-    });
-
-    $('.btns .about').click (function () {
-      var data = popUp[0];
-
-      $popUp.find ('.paper').empty ().append ($('<h2 />').text (data.t)).append ($('<div />').addClass ('pop_up').append (data.is.map (function (t) {
-        return $('<div />').addClass ('i').append ($('<div />').addClass ('l').text (t.t)).append ($('<div />').addClass ('r').append (t.h === '' ? t.c : $('<a />').attr ('href', t.h).attr ('target', '_blank').text (t.c)));
-      }))).append ($('<div />').addClass ('close').html ('&#10006;'));
-
-      $popUp.removeClass ('hide');
-    });
-    $('.btns .more').click (function () {
-      var data = popUp[1];
-
-      $popUp.find ('.paper').empty ().append ($('<h2 />').text (data.t)).append ($('<div />').addClass ('pop_up').append (data.is.map (function (t) {
-        return $('<div />').addClass ('i').append ($('<div />').addClass ('l').text (t.t)).append ($('<div />').addClass ('r').append (t.h === '' ? t.c : $('<a />').attr ('href', t.h).attr ('target', '_blank').text (t.c)));
-      }))).append ($('<div />').addClass ('close').html ('&#10006;'));
-
-      $popUp.removeClass ('hide');
-    });
-
-    $popUp.on ('click', '.close', function () {
-      $popUp.find ('.paper').empty ();
-      $popUp.addClass ('hide');
     });
 
     $loading.fadeOut (function () {
