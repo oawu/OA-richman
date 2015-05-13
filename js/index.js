@@ -27,7 +27,7 @@ $(function () {
 
     var name1 = '玩家';
     var name2 = '電腦';
-    name1 = prompt ("請輸入您的暱稱吧！", name);
+    name1 = prompt ("請輸入您的暱稱吧！", name1);
     if (!name1 || name1.length <= 0)
       name1 = '玩家';
 
