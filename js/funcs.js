@@ -9,6 +9,7 @@
     var _markerInfos = null;
     var _polyline = null;
     var $_logs = null;
+    var _userCount = 0;
 
     var circlePath = function (r) {
       return 'M 0 0 m -' + r + ', 0 '+
@@ -63,14 +64,19 @@
 
       mapMove (Unit.lat, Unit.lng, 0, Unit.unit, callback);
     };
-
+    var nowTime = function () {
+      var d = new Date ();
+      // return d.getFullYear () + '-' + ("0" + (d.getMonth () + 1)).slice (-2) + '-' + ('0' + d.getDate ()).slice (-2) + ' ' + d.getHours () + ':' + d.getMinutes () + ':' + d.getSeconds ();
+      return d.getHours () + ':' + d.getMinutes () + ':' + d.getSeconds ();
+    };
     var logs = function (text, className) {
       if (!($_logs && text))
         return;
+
       if (className === 'title')
         $_logs.append ($('<div />').addClass ('title').text (text));
       else
-        $_logs.append ($('<div />').addClass ('log').append ($('<div />').addClass ('l').text (text)).append ($('<div />').addClass ('r').text ('asd')));
+        $_logs.append ($('<div />').addClass ('log').append ($('<div />').addClass ('l').text (text)).append ($('<div />').addClass ('r').text (nowTime ())));
 
       var _logs = $_logs.get (0);
       _logs.scrollTop = _logs.scrollHeight;
@@ -95,7 +101,7 @@
       return this;
     };
 
-    this.markerInfoToBuild = function () {
+    this.markerInfoToBuild = function (user) {
       this.layer += 1;
 
       var prevHeading = (360 + google.maps.geometry.spherical.computeHeading (this.getPosition (), this.prev.getPosition ())) % 360;
@@ -114,7 +120,7 @@
         map: _map,
         draggable: false,
         position: google.maps.geometry.spherical.computeOffset (this.getPosition (), 80, heading),
-        icon: 'img/map/House-' + this.layer + '-icon.png'
+        icon: 'img/map/build/h' + user.id + '_' + this.layer + '.png'
       });
 
       return true;
@@ -157,7 +163,7 @@
     this.initPolyline = function () {
       _polyline = new google.maps.Polyline ({
         map: _map,
-        path: _markerInfos.map (function (t) { return t.marker.getPosition (); }),
+        path: _markerInfos.map (function (t) { return t.marker.getPosition (); }).concat ([_markerInfos[0].marker.getPosition ()]),
         strokeColor: 'rgba(102, 217, 239, .5)',
         strokeWeight: 10
       });
@@ -228,18 +234,18 @@
         return false;
       }
 
-      if (this.quotaObj.text () < (_markerInfos[this.index].price * (_markerInfos[this.index].layer + 1))) {
+      if (this.quotaObj.text () < _markerInfos[this.index].price) {
         logs (this.name + ' 錢不夠，哭哭..');
         return true;
       }
 
-      if (!_markerInfos[this.index].toBuild ()) {
+      if (!_markerInfos[this.index].toBuild (this)) {
         alert ('系統錯誤！');
         location.reload ();
       }
 
       _markerInfos[this.index].owner = this;
-      this.quotaObj.text (this.quotaObj.text () - _markerInfos[this.index].price * _markerInfos[this.index].layer);
+      this.quotaObj.text (this.quotaObj.text () - _markerInfos[this.index].price);
 
       if (_markerInfos[this.index].layer > 1)
         logs (this.name + ' 房子加蓋了一層！');
@@ -316,7 +322,7 @@
 
     this.createUser = function (name, $quota, color) {
       return {
-        // id:
+        id: _userCount++,
         index: 0,
         name: name,
         quotaObj: $quota,
