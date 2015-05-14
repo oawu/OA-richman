@@ -69,7 +69,7 @@ $(function () {
             nStep = Math.floor ((Math.random () * 6) + 1);
             map.logs (user2.name + ' 擲出 ' + nStep + ' 點！');
 
-            user2.goStep (2, true, function () {
+            user2.goStep (nStep, true, function () {
               $throwDice.prop ('disabled', false);
               map.logs ('換 ' + user1.name + ' 擲骰子！', 'title');
             });
