@@ -1,8 +1,7 @@
 .DS_Store
 sftp-config*
 
-compass/.sass-cache/*
+cmd/.sass-cache/*
 
-gulp/node_modules/*
-gulp/.sass-cache/*
-gulp/npm-debug.log
+cmd/node_modules/*
+cmd/npm-debug.log

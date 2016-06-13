@@ -25,7 +25,7 @@ $(function () {
       ]},
       {t: '更多相關作品', is: [
         {t: 'Material Design UI', h: 'https://github.com/comdan66/OA-material', c: 'OA-material'},
-        {t: '北港迎媽祖', h: 'http://comdan66.github.io/matsu/2015/din-tao_map-19an.html', c: 'OA-matsu'},
+        {t: '北港迎媽祖', h: 'http://works.ioa.tw/matsu/2015/din-tao_map-19an.html', c: 'OA-matsu'},
         {t: 'Js 迷宮', h: 'https://github.com/comdan66/OA-maze', c: 'OA-maze'},
         {t: 'Js imgLiquid', h: 'https://github.com/comdan66/OA-imgLiquid', c: 'OA-imgLiquid'},
         {t: '導航列', h: 'https://github.com/comdan66/OA-navbar', c: 'OA-navbar'},

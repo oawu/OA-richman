@@ -14,7 +14,7 @@
 
 * 未來將會畫出連線、計分、蓋房..等，如有興趣者歡迎至 [GitHub](https://github.com/comdan66/OA-richman/) 下載，非常歡迎討論與分享！
 
-* Demo 範例頁面: [http://comdan66.github.io/OA-richman/](http://comdan66.github.io/OA-richman/)
+* Demo 範例頁面: [http://works.ioa.tw/OA-richman/](http://works.ioa.tw/OA-richman/)
 
 
 <br/>
