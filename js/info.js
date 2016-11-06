@@ -24,13 +24,13 @@ $(function () {
         {t: '更新日期', h: '', c: '2015/05/13'},
       ]},
       {t: '更多相關作品', is: [
-        {t: 'Material Design UI', h: 'https://github.com/comdan66/OA-material', c: 'OA-material'},
-        {t: '北港迎媽祖', h: 'https://works.ioa.tw/matsu/2015/din-tao_map-19an.html', c: 'OA-matsu'},
-        {t: 'Js 迷宮', h: 'https://github.com/comdan66/OA-maze', c: 'OA-maze'},
-        {t: 'Js imgLiquid', h: 'https://github.com/comdan66/OA-imgLiquid', c: 'OA-imgLiquid'},
-        {t: '導航列', h: 'https://github.com/comdan66/OA-navbar', c: 'OA-navbar'},
-        {t: 'Js Slider View', h: 'https://github.com/comdan66/OA-scrollSliderView', c: 'OA-scrollSliderView'},
-        {t: 'Youtube Play List', h: 'https://github.com/comdan66/u2', c: 'OA-u2'},
+        {t: 'Material Design UI', h: 'https://works.ioa.tw/OA-material/index.html', c: 'OA-material'},
+        {t: '北港迎媽祖', h: 'http://mazu.ioa.tw/', c: 'OA-matsu'},
+        {t: 'Js 迷宮', h: 'https://works.ioa.tw/OA-maze/index.html', c: 'OA-maze'},
+        {t: 'Js imgLiquid', h: 'https://works.ioa.tw/OA-imgLiquid/index.html', c: 'OA-imgLiquid'},
+        {t: '導航列', h: 'https://works.ioa.tw/OA-navbar/index.html', c: 'OA-navbar'},
+        {t: 'Js Slider View', h: 'https://works.ioa.tw/OA-scrollSliderView/index.html', c: 'OA-scrollSliderView'},
+        {t: 'Youtube Play List', h: 'https://works.ioa.tw/u2/index.html', c: 'OA-u2'},
       ]}
     ];
 
